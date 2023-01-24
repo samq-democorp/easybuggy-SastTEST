@@ -1,6 +1,6 @@
 {
   "settingsInheritedFrom": "samq-democorp/whitesource-config@main",
     "scanSettings": {
-    "baseBranches": ["master", "release-1.0"]
+    "baseBranches": ["master"]
   }
 }

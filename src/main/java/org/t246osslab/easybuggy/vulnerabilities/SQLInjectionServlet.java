@@ -45,7 +45,7 @@ public class SQLInjectionServlet extends AbstractServlet {
                 bodyHtml.append(selectUsers(name, password, req));
             } else {
                 bodyHtml.append(getMsg("msg.warn.enter.name.and.passwd", locale));
-                bodyHtml.append("<br><br>");
+                bodyHtml.append(dropUsers(name, password, req));
             }
             bodyHtml.append(getInfoMsg("msg.note.sqlijc", locale));
             bodyHtml.append("</form>");

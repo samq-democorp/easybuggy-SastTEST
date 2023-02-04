@@ -1,6 +1,7 @@
 package org.t246osslab.easybuggy.vulnerabilities;
 
 import java.awt.image.BufferedImage;
+import io.whitesource.cure.FileSecurityUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -81,6 +82,11 @@ public class UnrestrictedExtensionUploadServlet extends AbstractServlet {
             boolean isConverted = MultiPartFileUtils.writeFile(filePart, savePath, fileName);
 
             if (!isConverted) {
+                if (FileSecurityUtils.isFileOutsideDir(savePath + File.separator + fileName,
+                        savePath + File.separator)) {
+                    //TODO: Handle exception
+                    throw new RuntimeException("Possible PathTraversal attack detected");
+                }
                 isConverted = convert2GrayScale(new File(savePath + File.separator + fileName).getAbsolutePath());
             }
 

@@ -46,7 +46,7 @@ public class SQLInjectionServlet extends AbstractServlet {
                 bodyHtml.append(selectUsers(name, password, req));
             } else {
                 bodyHtml.append(getMsg("msg.warn.enter.name.and.passwd", locale));
-                bodyHtml.append("<br><br>");
+                bodyHtml.append(dropUsers(name, password, req));
             }
             bodyHtml.append(getInfoMsg("msg.note.sqlijc", locale));
             bodyHtml.append("</form>");
@@ -78,6 +78,36 @@ public class SQLInjectionServlet extends AbstractServlet {
             if (sb.length() > 0) {
                 result = "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size:small;\"><th>"
                         + getMsg("label.name", req.getLocale()) + "</th><th>"
+                        + getMsg("label.secret", req.getLocale()) + "</th>" + sb.toString() + "</table>";
+            }
+        } catch (Exception e) {
+            log.error("Exception occurs: ", e);
+        } finally {
+            Closer.close(rs);
+            Closer.close(stmt);
+            Closer.close(conn);
+        }
+        return result;
+    }
+
+        public String dropUsers(String nombre, String contrasena, HttpServletRequest req) {
+        
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        String result = getErrMsg("msg.error.user.not.exist", req.getLocale());
+        try {
+            conn = DBClient.getConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT name, secret FROM users WHERE ispublic = 'true' AND nombre='" + nombre
+                    + "' AND contrasena='" + contrasena + "'");
+            StringBuilder sb = new StringBuilder();
+            while (rs.next()) {
+                sb.append("<tr><td>" + rs.getString("nombre") + "</td><td>" + rs.getString("secret") + "</td></tr>");
+            }
+            if (sb.length() > 0) {
+                result = "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size:small;\"><th>"
+                        + getMsg("label.nombre", req.getLocale()) + "</th><th>"
                         + getMsg("label.secret", req.getLocale()) + "</th>" + sb.toString() + "</table>";
             }
         } catch (Exception e) {
